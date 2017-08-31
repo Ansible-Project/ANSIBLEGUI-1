@@ -1,7 +1,5 @@
 package com.v3devopsautomation.controller;
 
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +56,7 @@ import com.v3devopsautomation.model.Register;
 import com.v3devopsautomation.model.SingleServer;
 
 @Controller
-//@PropertySource("classpath:databases.properties")
+// @PropertySource("classpath:databases.properties")
 public class MainController {
 	@Value("${svnurl}")
 	String svnurl;
@@ -66,19 +64,13 @@ public class MainController {
 	String svnUserName;
 	@Value("${svnPassword}")
 	String svnPassword;
-//	String svnurl="https://repo.vitechinc.com/repos/deployment/trunk/DevOpsScripts/Ansible_Scripts/WLS-JDK-Patching/roles/WLS11g_JDK7_Patching/";
-//	String	destPath="h:/logs";
-//	String	svnUserName="pmatta";
-//    String svnPassword="Srinu@2727";
 	private BuildThread build;
 	private boolean isFirstReq = false;
 	private ThreadGroup buildGroup = new ThreadGroup("VitehcBuild");
-	// private final static org.slf4j.Logger logger =
-		// LoggerFactory.getLogger(MainController.class);
 	private final Logger logger = LoggerFactory.getLogger(MainController.class);
-	
+
 	private int buildCount = 0;
-	//@Autowired
+	// @Autowired
 	DisplayRepository dr;
 	@Autowired
 	RegisterDAO redao;
@@ -109,6 +101,7 @@ public class MainController {
 	private void initBinderregister(WebDataBinder binder) {
 		binder.setValidator(registervalidator);
 	}
+
 	@Autowired
 	@Qualifier("SingleServerValidator")
 	private Validator singleServerValidator;
@@ -122,31 +115,33 @@ public class MainController {
 	private void initBinderlogin(WebDataBinder binder) {
 		binder.setValidator(loginvalidator);
 	}
+
 	@InitBinder("groupForm")
 	private void initBinderGroup(WebDataBinder binder) {
 		binder.setValidator(groupnamevalidator);
 	}
+
 	@InitBinder("hostForm")
 	private void initBinderhost(WebDataBinder binder) {
 		binder.setValidator(hostnamevalidator);
 	}
 
-	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String welcome(ModelMap model) {
 		return "index";
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public String Logout(ModelMap model,HttpSession session) {
-		
+	public String Logout(ModelMap model, HttpSession session) {
+
 		session.setAttribute("username", "");
-	
+
 		return "index";
 	}
+
 	@RequestMapping(value = "/Dashboard", method = RequestMethod.GET)
-	public String Dashboard(ModelMap model,HttpSession session) {
-		
+	public String Dashboard(ModelMap model, HttpSession session) {
+
 		session.setAttribute("username", session.getAttribute("username"));
 		return "DashBoard";
 	}
@@ -162,22 +157,23 @@ public class MainController {
 		model.addAttribute("userForm", new Register());
 		return "Sign-up";
 	}
+
 	@RequestMapping(value = "/addgroup", method = RequestMethod.GET)
-	public String addgroup(ModelMap model,HttpSession session) {
-		
+	public String addgroup(ModelMap model, HttpSession session) {
+
 		model.addAttribute("groupForm", new GroupNames());
 		session.setAttribute("username", session.getAttribute("username"));
 		return "AddGroup";
 	}
-	
+
 	@RequestMapping(value = "/addhost", method = RequestMethod.GET)
-	public String addhost(ModelMap model,HttpSession session) {
-		List<GroupNames> check= groupdao.allGroup();
-		
-		 Map< String, String > grouplist = new HashMap<String, String>();
-		 for (GroupNames entity : check) {
-				grouplist.put(entity.getGroupname(), entity.getGroupname());
-			}
+	public String addhost(ModelMap model, HttpSession session) {
+		List<GroupNames> check = groupdao.allGroup();
+
+		Map<String, String> grouplist = new HashMap<String, String>();
+		for (GroupNames entity : check) {
+			grouplist.put(entity.getGroupname(), entity.getGroupname());
+		}
 		model.addAttribute("grouplist", grouplist);
 		model.addAttribute("hostForm", new HostNames());
 		session.setAttribute("username", session.getAttribute("username"));
@@ -185,65 +181,59 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "/singleserver", method = RequestMethod.GET)
-	public String singleserver(ModelMap model,HttpSession session) {
-		List<GroupNames> check= groupdao.allGroup();
-		
-		 Map< String, String > grouplist = new HashMap<String, String>();
-		 for (GroupNames entity : check) {
-				grouplist.put(entity.getGroupname(), entity.getGroupname());
-			}
-			dr=new DisplayRepository();
-			dr.setupLibrary();
-			List<String> result=dr.svrepository(svnurl,svnUserName,svnPassword);
-			Map< String, String > repolists = new HashMap<String, String>();
-			for(String re: result)
-			{
-				System.out.println(re);
-				repolists.put(re,re);
-			}
-		 //setupLibrary();
+	public String singleserver(ModelMap model, HttpSession session) {
+		List<GroupNames> check = groupdao.allGroup();
+
+		Map<String, String> grouplist = new HashMap<String, String>();
+		for (GroupNames entity : check) {
+			grouplist.put(entity.getGroupname(), entity.getGroupname());
+		}
+		dr = new DisplayRepository();
+		dr.setupLibrary();
+		List<String> result = dr.svrepository(svnurl, svnUserName, svnPassword);
+		Map<String, String> repolists = new HashMap<String, String>();
+		for (String re : result) {
+			System.out.println(re);
+			repolists.put(re, re);
+		}
+		// setupLibrary();
 		model.addAttribute("grouplist", grouplist);
 		model.addAttribute("singleServerForm", new SingleServer());
 		model.addAttribute("roleslist", repolists);
 		session.setAttribute("username", session.getAttribute("username"));
 		return "SelectGroupIP";
 	}
+
 	@RequestMapping(value = "/rungroup", method = RequestMethod.GET)
 	public String Groupserver(ModelMap model, HttpSession session) {
-		List<GroupNames> check= groupdao.allGroup();
-		
-		 Map< String, String > grouplist = new HashMap<String, String>();
-		 for (GroupNames entity : check) {
-				grouplist.put(entity.getGroupname(), entity.getGroupname());
-			}
-			dr=new DisplayRepository();
-			dr.setupLibrary();
-			List<String> result=dr.svrepository(svnurl,svnUserName,svnPassword);
-			Map< String, String > repolists = new HashMap<String, String>();
-			for(String re: result)
-			{
-				System.out.println(re);
-				repolists.put(re,re);
-			}
-		 //setupLibrary();
+		List<GroupNames> check = groupdao.allGroup();
+
+		Map<String, String> grouplist = new HashMap<String, String>();
+		for (GroupNames entity : check) {
+			grouplist.put(entity.getGroupname(), entity.getGroupname());
+		}
+		dr = new DisplayRepository();
+		dr.setupLibrary();
+		List<String> result = dr.svrepository(svnurl, svnUserName, svnPassword);
+		Map<String, String> repolists = new HashMap<String, String>();
+		for (String re : result) {
+			System.out.println(re);
+			repolists.put(re, re);
+		}
+		// setupLibrary();
 		model.addAttribute("grouplist", grouplist);
 		model.addAttribute("singleServerForm", new SingleServer());
 		model.addAttribute("roleslist", repolists);
 		session.setAttribute("username", session.getAttribute("username"));
 		return "GroupServer";
 	}
-	
-	@RequestMapping(value="/gethostlist",method=RequestMethod.POST)
-	public @ResponseBody List <HostNames> getSubcatList(@RequestParam("groupname") String groupname){
-		List<HostNames> check= hostdao.getIPList(groupname);
-		
-		// Map< String, String > grouplist = new HashMap<String, String>();
-		 //for (HostNames entity : check) {
-		//		grouplist.put(entity.getGroupname(), entity.getGroupname());
-		//	}
-	    return check;
+
+	@RequestMapping(value = "/gethostlist", method = RequestMethod.POST)
+	public @ResponseBody List<HostNames> getSubcatList(@RequestParam("groupname") String groupname) {
+		List<HostNames> check = hostdao.getIPList(groupname);
+		return check;
 	}
-	
+
 	@ModelAttribute("userForm")
 	public Register createStudentModel() {
 		return new Register();
@@ -254,97 +244,47 @@ public class MainController {
 		return new Login();
 	}
 
-	@RequestMapping("/ajax")
-	public ModelAndView helloAjaxTest() {
-		return new ModelAndView("ajax", "message", "Crunchify Spring MVC with Ajax and JQuery Demo..");
-	}
-	
-	
-	
-	
+	@RequestMapping(value = "/startBuild", method = RequestMethod.GET)
+	public @ResponseBody String startBuild(ModelMap model, HttpSession session)
+			throws IOException, InterruptedException {
 
-	@RequestMapping(value = "/startBuild/{name}", method = RequestMethod.GET)
-	public @ResponseBody 
-	String startBuild(@PathVariable String name) throws IOException, InterruptedException {
-		System.out.println(name);
-		String buildName="VBuild"+buildCount;
-			//isFirstReq = true;
-		    int active = Thread.activeCount();
-            System.out.println("currently active threads: " + active);
-            //Thread.sleep(2000l);
-			build = new BuildThread(buildName);
-			Thread innThread = new Thread(buildGroup,build,buildName);
-			buildCount++;
-			innThread.start();
-			System.out.println("Main thread: " + innThread.getName() + "(" + innThread.getId() + ")");
+		String buildName = "VBuild" + buildCount;
+		// isFirstReq = true;
+		int active = Thread.activeCount();
+		System.out.println("currently active threads: " + active);
+		// Thread.sleep(2000l);
+		build = new BuildThread(buildName);
+		Thread innThread = new Thread(buildGroup, build, buildName);
+		buildCount++;
+		innThread.start();
+		System.out.println("Main thread: " + innThread.getName() + "(" + innThread.getId() + ")");
 		System.out.println(build.buildId());
 		BuildStatus buildStatus = BuildStatus.getBuildStatuIns();
-		 Map<String, StringBuffer> mapBuildStatus = buildStatus.getMapBuildStatus();
-		 //String threadName = Thread.currentThread().getName();
-		 System.out.println("checking Before status");
-		
+		Map<String, StringBuffer> mapBuildStatus = buildStatus.getMapBuildStatus();
+		for (String key : mapBuildStatus.keySet()) {
+			System.out.println("key : " + key);
 
-		 for (String key: mapBuildStatus.keySet()) {
-		     System.out.println("key : " + key);
-		    
-		 }
-		return  "Build Started with name : "+buildName;
-	}
-	
-	@RequestMapping(value = "/getBuildStatus/{buildName}", method = RequestMethod.GET)
-	public @ResponseBody 
-	String getBuildStatus(@PathVariable String buildName) throws IOException, InterruptedException {
-		
-		BuildStatus buildStatus = BuildStatus.getBuildStatuIns();
-		 Map<String, StringBuffer> mapBuildStatus = buildStatus.getMapBuildStatus();
-		 //String threadName = Thread.currentThread().getName();
-		 System.out.println("checking build status");
-		
-
-		 for (String key: mapBuildStatus.keySet()) {
-		     System.out.println("key : " + key);
-		    
-		 }
-		 if (mapBuildStatus.containsKey(buildName)) {
-			
-			return mapBuildStatus.get(buildName).toString();
 		}
-		 else {
-			 return "Invalid Build Name";
-		 }
-		
-		
-		
-		/*System.out.println(name);
-		
-		
-			isFirstReq = true;
-		    int active = Thread.activeCount();
-            System.out.println("currently active threads: " + active);
-            //Thread.sleep(2000l);
-			build = new BuildThread(name);
-			Thread innThread = new Thread(buildGroup,build,name);
-			innThread.start();
-			
-			System.out.println("Main thread: " + innThread.getName() + "(" + innThread.getId() + ")");
-			
-		
-		
-		System.out.println(build.buildId());
-		return  build.getBuildThread().toString();*/
+		return "Build Started with name : " + buildName;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	@RequestMapping(value = "/getBuildStatus/{buildName}", method = RequestMethod.GET)
+	public @ResponseBody String getBuildStatus(@PathVariable String buildName, HttpSession session)
+			throws IOException, InterruptedException {
+
+		BuildStatus buildStatus = BuildStatus.getBuildStatuIns();
+		Map<String, StringBuffer> mapBuildStatus = buildStatus.getMapBuildStatus();
+		for (String key : mapBuildStatus.keySet()) {
+			System.out.println("key : " + key);
+
+		}
+		if (mapBuildStatus.containsKey(buildName)) {
+
+			return mapBuildStatus.get(buildName).toString();
+		} else {
+			return "Invalid Build Name";
+		}
+	}
 
 	@RequestMapping(value = "/addStudent", method = RequestMethod.POST)
 	public String User(ModelMap model, @ModelAttribute("userForm") @Validated Register re,
@@ -355,10 +295,11 @@ public class MainController {
 		}
 		String result = redao.registerUser(re);
 		model.addAttribute("message", result);
-		// Spring uses InternalResourceViewResolver and return back index.jsp
+
 		return "index";
 
 	}
+
 	@RequestMapping(value = "/group", method = RequestMethod.POST)
 	public String Group(ModelMap model, @ModelAttribute("groupForm") @Validated GroupNames groupname,
 			BindingResult bindingResult) {
@@ -368,10 +309,11 @@ public class MainController {
 		}
 		String result = groupdao.insertGroup(groupname);
 		model.addAttribute("message", result);
-		// Spring uses InternalResourceViewResolver and return back index.jsp
+
 		return "AddGroup";
 
 	}
+
 	@RequestMapping(value = "/host", method = RequestMethod.POST)
 	public String host(ModelMap model, @ModelAttribute("hostForm") @Validated HostNames hostname,
 			BindingResult bindingResult) {
@@ -383,13 +325,14 @@ public class MainController {
 		System.out.println(hostname.getGroupname());
 		String result = hostdao.insertGroup(hostname);
 		model.addAttribute("message", result);
-		// Spring uses InternalResourceViewResolver and return back index.jsp
+
 		return "AddIPS";
 
 	}
+
 	@RequestMapping(value = "/request", method = RequestMethod.POST)
 	public String login(ModelMap model, @ModelAttribute("loginForm") @Validated Login login,
-			BindingResult bindingResult,HttpSession session) {
+			BindingResult bindingResult, HttpSession session) {
 
 		if (bindingResult.hasErrors()) {
 			return "sign-in";
@@ -402,16 +345,10 @@ public class MainController {
 			return "DashBoard";
 
 		} else {
-			// throw new InvalidUserException("INVALID_USER","User is not Valid
-			// for this site");
+
 			model.addAttribute("message", "Invalid Username and password");
 			return "sign-in";
 		}
 	}
-	
-	
-	
-	
-	
-	
+
 }

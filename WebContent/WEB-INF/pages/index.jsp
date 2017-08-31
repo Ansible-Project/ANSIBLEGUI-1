@@ -8,9 +8,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="<c:url value="/asserts/css/main.css" />" rel="stylesheet">
+
 <title>V3Operations</title>
 </head>
 <body>
+
 <h2>Welcome to V3OPSAUTOMATION</h2>
 <table align="center">
             <tr>
@@ -23,16 +25,7 @@
             </tr>
 
         </table>
-        <c:if test="${not empty lists}">
-
-		<ul>
-			<c:forEach var="listValue" items="${lists}">
-				<li>${listValue.getUsername()}</li>
-				<li>${listValue.getPassword()}</li>
-			</c:forEach>
-		</ul>
-
-	</c:if>
+      
         
 
 </body>

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.core.singletons.BuildStatus;
 
 public class BuildThread implements Runnable {
-	private final Logger logger = LoggerFactory.getLogger(BuildThread.class);
 	
 	//private StringBuffer buildThread = new StringBuffer();
 	private boolean isBuildStarted = false;

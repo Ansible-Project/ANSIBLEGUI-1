@@ -4,27 +4,30 @@
 <head>
     <title>Spring MVC Form Handling</title>
     <link href="<c:url value="/asserts/css/main.css" />" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-<h2>Login</h2>
-<h2>${message}</h2>
+<h2 style="margin-left:390px">Login</h2>
+<h2 style="margin-left:390px">${message}</h2>
 <form:form method="POST" action="request" modelAttribute="loginForm">
   
-   <table>
+   <table style="margin-left:390px">
    <tr>
-        <td><form:label path="username">Username</form:label></td>
-        <td><form:input path="username" /></td>
-        <td><form:errors path="username" cssClass="error" /></td>
+        <td width="20%"><form:label path="username">Username</form:label></td>
+        <td width="20%"><form:input path="username" class="form-control" /></td>
+        <td width="40%"><form:errors path="username" cssClass="error" /></td>
     </tr>
     <tr>
-        <td><form:label path="password">Password</form:label></td>
-        <td><form:password  path="password" /></td>
-        <td><form:errors path="password" cssClass="error" /></td>
+        <td width="20%"><form:label path="password">Password</form:label></td>
+        <td width="20%"><form:password  path="password" class="form-control"/></td>
+        <td width="40%"><form:errors path="password" cssClass="error" /></td>
     </tr>
     <tr>
         <td colspan="2">
-            <input type="submit" value="Submit"/>
+            <input type="submit" class="btn btn-default" value="Submit"/>
         </td>
     </tr>
 </table>  
